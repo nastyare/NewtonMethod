@@ -59,21 +59,12 @@ namespace NewtonMethod
 
                 double x0 = (a + b) / 2;
                 double x1 = x0;
-                //double x1 = x0 - function(x0) / derivative(x0);
-
-                /*while (Math.Abs(x1 - x0) > exp)
-                {
-                    x0 = x1;
-                    x1 = x0 - function(x0) / derivative(x0);
-                }*/
                 do
                 {
                     x0 = x1;
                     x1 = x0 - (function(x0) / derivative(x0));
                 } while (Math.Abs(function(x0) / derivative(x0)) >= exp);
                 textBox4.Text = x1.ToString();
-
-                // Отображаем график функции 10*x-10 на интервале [a, b] в элементе Chart
                 chart1.Series.Clear();
                 Series series = new Series("Function");
                 series.ChartType = SeriesChartType.Line;
