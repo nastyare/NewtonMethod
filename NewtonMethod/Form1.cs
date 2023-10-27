@@ -1,9 +1,17 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using System;
+using System.Windows.Forms.DataVisualization.Charting;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
-namespace HalfIntervalMethod
+namespace NewtonMethod
 {
     public partial class Form1 : Form
     {
@@ -14,22 +22,18 @@ namespace HalfIntervalMethod
 
         private void calculateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            double Function(double x)
-            {
-                return (27 - 18 * x + 2 * Math.Pow(x, 2)) * Math.Exp(-(x / 3));
-            }
             try
             {
-                double a, b, exp, x;
+                double a, b, exp;
 
-                if (!double.TryParse(textBoxA.Text, out a))
+                if (!double.TryParse(textBox1.Text, out a))
                 {
                     MessageBox.Show("В а должно быть только натуральное число.");
 
                     return;
                 }
 
-                if (!double.TryParse(textBoxB.Text, out b))
+                if (!double.TryParse(textBox2.Text, out b))
                 {
                     MessageBox.Show("В b должно быть только натуральное число.");
 
@@ -43,30 +47,45 @@ namespace HalfIntervalMethod
                     return;
                 }
 
-                if (!double.TryParse(textBoxE.Text, out exp) || !Regex.IsMatch(textBoxE.Text, @"(1|10+)|(0,(1|0+1))")
-                    || textBoxE.Text[0] == '-')
+                if (!double.TryParse(textBox3.Text, out exp) || !Regex.IsMatch(textBox3.Text, @"(1|10+)|(0,(1|0+1))")
+                    || textBox3.Text[0] == '-')
                 {
-                    MessageBox.Show("неправильный формат. пример: 0.1");
+                    MessageBox.Show("неправильный формат. пример: 0,1");
 
                     return;
                 }
+                Func<double, double> function = x => 10 * x - 10;
+                Func<double, double> derivative = x => 10;
 
-                while (Math.Abs(b - a) > 2 * exp)
+                double x0 = (a + b) / 2;
+                double x1 = x0;
+                //double x1 = x0 - function(x0) / derivative(x0);
+
+                /*while (Math.Abs(x1 - x0) > exp)
                 {
-                    x = (b - a) / 2 + a;
+                    x0 = x1;
+                    x1 = x0 - function(x0) / derivative(x0);
+                }*/
+                do
+                {
+                    x0 = x1;
+                    x1 = x0 - (function(x0) / derivative(x0));
+                } while (Math.Abs(function(x0) / derivative(x0)) >= exp);
+                textBox4.Text = x1.ToString();
 
-                    if (Function(a) * Function(x) < 0)
-                    {
-                        b = x;
-                    }
-                    else
-                    {
-                        a = x;
-                    }
+                // Отображаем график функции 10*x-10 на интервале [a, b] в элементе Chart
+                chart1.Series.Clear();
+                Series series = new Series("Function");
+                series.ChartType = SeriesChartType.Line;
 
+                for (double x = a; x <= b; x += 0.1)
+                {
+                    double y = function(x);
+                    series.Points.AddXY(x, y);
                 }
-                double minimum = (a + b) / 2;
-                textBox1.Text = $"{minimum:F4}";
+
+                chart1.Series.Add(series);
+
             }
             catch (Exception ex)
             {
@@ -76,10 +95,11 @@ namespace HalfIntervalMethod
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            textBoxA.Clear();
-            textBoxB.Clear();
-            textBoxE.Clear();
             textBox1.Clear();
+            textBox2.Clear();
+            textBox3.Clear();
+            chart1.Series[0].Points.Clear();
+            //textBox1.Text = string.Empty;
         }
     }
 }
