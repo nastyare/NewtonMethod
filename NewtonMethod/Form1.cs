@@ -7,6 +7,8 @@ using MathNet.Numerics.Differentiation;
 using System.Net;
 using MathNet.Numerics.Differentiation;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using MathNet.Numerics.Optimization;
+using System.Text.RegularExpressions;
 
 namespace NewtonMethod
 {
@@ -23,101 +25,112 @@ namespace NewtonMethod
             decimal value = expression.Eval<decimal>();
             return (double)value;
         }
+        private bool IsLinearFunction(string function)
+        {
+            string pattern = @"^\s*-?\d*\s*\*\s*x\s*([+-]\s*\d+)?\s*$|^\s*x\s*([+-]\s*\d+)?\s*$";
+            return Regex.IsMatch(function, pattern);
+        }
         private void calculateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            try
+            string userInput = textBox7.Text.ToLower();
+            if (IsLinearFunction(userInput))
             {
-                double a, b, Xi;
-                if (!double.TryParse(textBox1.Text, out a) || !double.TryParse(textBox2.Text, out b) || !double.TryParse(textBox3.Text, out Xi))
+                MessageBox.Show("Функция является линейной. Метод Ньютона неприменим.");
+            }
+            else
+            {
+                try
                 {
-                    throw new ArgumentException("Некорректные значения входных данных");
-                }
-                if (a >= b)
-                {
-                    throw new ArgumentException("Некорректные границы интервала");
-                }
-                this.chart1.Series[0].Points.Clear();
-                double x = a;
-                double y;
-                while (x <= b)
-                {
-                    y = F(x);
-                    this.chart1.Series[0].Points.AddXY(x, y);
-                    x += 0.1;
-                }
-                Xi = (int)-Math.Log10(Xi);
-                double Root;
-                if (F(a) * F(b) <= 0)
-                {
-                    Root = (a + b) / 2;
-
-                    while (Math.Abs(b - a) > Math.Pow(10, -Xi))
+                    double a, b, Xi;
+                    if (!double.TryParse(textBox1.Text, out a) || !double.TryParse(textBox2.Text, out b) || !double.TryParse(textBox3.Text, out Xi))
                     {
-                        double y1 = F(a), y2 = F(b), y3 = F(Root);
-                        if (y1 * y3 < 0)
-                        {
-                            b = Root;
-                        }
-                        else if (y2 * y3 < 0)
-                        {
-                            a = Root;
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        throw new ArgumentException("Некорректные значения входных данных");
+                    }
+                    if (a >= b)
+                    {
+                        throw new ArgumentException("Некорректные границы интервала");
+                    }
+                    this.chart1.Series[0].Points.Clear();
+                    double x = a;
+                    double y;
+                    while (x <= b)
+                    {
+                        y = F(x);
+                        this.chart1.Series[0].Points.AddXY(x, y);
+                        x += 0.1;
+                    }
+                    Xi = (int)-Math.Log10(Xi);
+                    double Root;
+                    if (F(a) * F(b) <= 0)
+                    {
                         Root = (a + b) / 2;
 
+                        while (Math.Abs(b - a) > Math.Pow(10, -Xi))
+                        {
+                            double y1 = F(a), y2 = F(b), y3 = F(Root);
+                            if (y1 * y3 < 0)
+                            {
+                                b = Root;
+                            }
+                            else if (y2 * y3 < 0)
+                            {
+                                a = Root;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                            Root = (a + b) / 2;
+
+                        }
+                        textBox4.Text = $"{Root:F4}";
                     }
-                    //if ((27 - 18 * Root + 2 * Math.Pow(Root, 2)) * Math.Exp(-Root / 3) < 0 + Root && (27 - 18 * Root + 2 * Math.Pow(Root, 2)) * Math.Exp(-Root / 3) > 0 - Root)
-                    //{
-                    textBox4.Text = $"{Root:F4}";
-                    //}
-                }
-                else
-                {
-                    throw new ArgumentException("Нет корней на этом интервале или их больше одного");
-                }
-                if (!double.TryParse(textBox1.Text, out a) || !double.TryParse(textBox2.Text, out b) || !double.TryParse(textBox3.Text, out Xi))
-                {
-                    throw new ArgumentException("Некорректные значения входных данных");
-                }
-                double max, min;
-                double delta = Xi / 10;
-                while (b - a >= Xi)
-                {
-                    double middle = (a + b) / 2;
-                    double lambda = middle - delta, mu = middle + delta;
-                    if (F(lambda) < F(mu))
-                        b = mu;
                     else
-                        a = lambda;
+                    {
+                        throw new ArgumentException("Нет корней на этом интервале или их больше одного");
+                    }
+                    if (!double.TryParse(textBox1.Text, out a) || !double.TryParse(textBox2.Text, out b) || !double.TryParse(textBox3.Text, out Xi))
+                    {
+                        throw new ArgumentException("Некорректные значения входных данных");
+                    }
+                    double max, min;
+                    double delta = Xi / 10;
+                    //минимум
+                    while (b - a >= Xi)
+                    {
+                        double middle = (a + b) / 2;
+                        double lambda = middle - delta, mu = middle + delta;
+                        if (F(lambda) < F(mu))
+                            b = mu;
+                        else
+                            a = lambda;
+                    }
+                    min = (a + b) / 2;
+
+                    //точка максимума
+                    if (!double.TryParse(textBox1.Text, out a) || !double.TryParse(textBox2.Text, out b) || !double.TryParse(textBox3.Text, out Xi))
+                    {
+                        throw new ArgumentException("Некорректные значения входных данных");
+                    }
+                    while (b - a >= Xi)
+                    {
+                        double middle = (a + b) / 2;
+                        double lambda = middle - delta, mu = middle + delta;
+                        if (F(lambda) > F(mu))
+                            b = mu;
+                        else
+                            a = lambda;
+                    }
+                    max = (a + b) / 2;
+
+                    textBox5.Text = $"{min:F4}";
+                    textBox6.Text = $"{max:F4}";
                 }
-                min = (a + b) / 2;
 
-
-                // Точка максимума
-                if (!double.TryParse(textBox1.Text, out a) || !double.TryParse(textBox2.Text, out b) || !double.TryParse(textBox3.Text, out Xi))
+                catch (Exception ex)
                 {
-                    throw new ArgumentException("Некорректные значения входных данных");
+                    MessageBox.Show("Ошибка: " + ex.Message);
                 }
-                while (b - a >= Xi)
-                {
-                    double middle = (a + b) / 2;
-                    double lambda = middle - delta, mu = middle + delta;
-                    if (F(lambda) > F(mu))
-                        b = mu;
-                    else
-                        a = lambda;
-                }
-                max = (a + b) / 2;
-
-                textBox5.Text = $"{min:F4}";
-                textBox6.Text = $"{max:F4}";
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Ошибка: " + ex.Message);
             }
         }
         public void GoldenSectionSearchMin(Func<double, double> f, double StartPoint, double EndPoint, double epsilon)
@@ -217,24 +230,17 @@ namespace NewtonMethod
             }
         }
 
-        public double MethodOfNewton(double a, double b, double accuracy)
+        public double NewtonMethod(double a, double b, double accuracy)
         {
 
             double x0 = (a + b) / 2;
 
             double x1 = x0;
-
-            //if (F(a) * F(b) <= accuracy)
-            //{
             do
             {
                 x0 = x1;
                 x1 = x0 - (F(x0) / Differentiate.FirstDerivative(F, x0));
             } while (Math.Abs(F(x0) / Differentiate.FirstDerivative(F, x0)) >= accuracy);
-            //} else
-            //{
-
-            //}
 
             return x1;
 
@@ -249,7 +255,7 @@ namespace NewtonMethod
             textBox6.Clear();
             textBox7.Clear();
         }
-        private void goldenToolStripMenuItem_Click(object sender, EventArgs e)
+        /*private void goldenToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
             {
@@ -274,14 +280,13 @@ namespace NewtonMethod
 
                 GoldenSectionSearchMax(F, a, b, Xi);
                 GoldenSectionSearchMin(F, a, b, Xi);
-                double root = MethodOfNewton(a, b, Xi = (int)-Math.Log10(Xi));
+                double root = NewtonMethod(a, b, Xi = (int)-Math.Log10(Xi));
                 textBox4.Text = $"{root:F4}";
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Ошибка: " + ex.Message);
             }
-
-        }
+        }*/
     }
 }

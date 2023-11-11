@@ -35,7 +35,7 @@
             this.menuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.calculateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.goldenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            //this.goldenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -72,7 +72,8 @@
             this.menuToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.calculateToolStripMenuItem,
             this.deleteToolStripMenuItem,
-            this.goldenToolStripMenuItem});
+            //this.goldenToolStripMenuItem
+            });
             this.menuToolStripMenuItem.Name = "menuToolStripMenuItem";
             this.menuToolStripMenuItem.Size = new System.Drawing.Size(64, 25);
             this.menuToolStripMenuItem.Text = "Menu";
@@ -81,7 +82,7 @@
             // 
             this.calculateToolStripMenuItem.Name = "calculateToolStripMenuItem";
             this.calculateToolStripMenuItem.Size = new System.Drawing.Size(218, 30);
-            this.calculateToolStripMenuItem.Text = "Метод Ньютона";
+            this.calculateToolStripMenuItem.Text = "Ньютон + Сечение";
             this.calculateToolStripMenuItem.Click += new System.EventHandler(this.calculateToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem
@@ -93,10 +94,10 @@
             // 
             // goldenToolStripMenuItem
             // 
-            this.goldenToolStripMenuItem.Name = "goldenToolStripMenuItem";
+            /*this.goldenToolStripMenuItem.Name = "goldenToolStripMenuItem";
             this.goldenToolStripMenuItem.Size = new System.Drawing.Size(218, 30);
             this.goldenToolStripMenuItem.Text = "Золотое сечение";
-            this.goldenToolStripMenuItem.Click += new System.EventHandler(this.goldenToolStripMenuItem_Click);
+            this.goldenToolStripMenuItem.Click += new System.EventHandler(this.goldenToolStripMenuItem_Click);*/
             // 
             // label1
             // 
@@ -168,6 +169,7 @@
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(149, 22);
             this.textBox4.TabIndex = 10;
+            textBox4.ReadOnly = true;
             // 
             // label4
             // 
@@ -202,6 +204,7 @@
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(149, 22);
             this.textBox5.TabIndex = 14;
+            textBox5.ReadOnly = true;
             // 
             // textBox6
             // 
@@ -209,6 +212,7 @@
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(149, 22);
             this.textBox6.TabIndex = 15;
+            textBox6.ReadOnly = true;
             // 
             // textBox7
             // 
@@ -278,7 +282,7 @@
         private System.Windows.Forms.ToolStripMenuItem menuToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem calculateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem goldenToolStripMenuItem;
+        //private System.Windows.Forms.ToolStripMenuItem goldenToolStripMenuItem;
         private System.Windows.Forms.TextBox textBox7;
         private System.Windows.Forms.Label function;
     }
