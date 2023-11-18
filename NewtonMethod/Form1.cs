@@ -22,6 +22,7 @@ namespace NewtonMethod
         {
             org.matheval.Expression expression = new org.matheval.Expression(textBox7.Text.ToLower());
             expression.Bind("x", X);
+
             decimal value = expression.Eval<decimal>();
             return (double)value;
         }
@@ -48,7 +49,7 @@ namespace NewtonMethod
                     }
                     if (a >= b)
                     {
-                        throw new ArgumentException("Некорректные границы интервала");
+                        throw new ArgumentException("a должен быть меньше b");
                     }
                     this.chart1.Series[0].Points.Clear();
                     double x = a;
